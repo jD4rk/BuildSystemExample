@@ -1,0 +1,88 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 20
+    buildToolsVersion "22.0.0"
+
+    if (project.hasProperty("KEY_STORE_FILE")) {
+        signingConfigs {
+            release {
+                storeFile file(KEY_STORE_FILE)
+                storePassword KEY_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+            debug {
+                storePassword ""
+                keyAlias ""
+                keyPassword ""
+            }
+        }
+    }
+
+    defaultConfig {
+        applicationId "it.jdark.android.buildsystemexample.app"
+        minSdkVersion 18
+        targetSdkVersion 20
+        versionCode 1
+        versionName "1.0"
+    }
+    /*signingConfigs {
+        release {
+            storeFile file('/home/jdark/.android/androidStudio.key')
+            storePassword "||android||"
+            keyAlias "release"
+            keyPassword "||release||"
+        }
+    }*/
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources false
+            /*runProguard false*/
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled true
+            shrinkResources false
+            /*runProguard false*/
+            signingConfig signingConfigs.debug
+            versionNameSuffix "-debug"
+
+        }
+    }
+    productFlavors {
+        demo {
+            applicationId "it.jdark.android.buildsystemexample.app.demo"
+            versionName "1.0-demo"
+        }
+        full {
+            applicationId "it.jdark.android.buildsystemexample.app.full"
+            versionName "1.0-full"
+        }
+    }
+}
+
+dependencies {
+    // Local Binary Dependency
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    // Module Dependency
+    compile project(':mylibrary')
+    // Remote Binary Dependency
+    compile 'com.android.support:appcompat-v7:20.0.0'
+    //<compile 'com.kontakt.sdk.android:library:1.0.0'
+}
+/*
+task clearJar(type: Delete) {
+    delete 'build/libs/ProjectName.jar'
+}
+
+task makeJar(type: Copy) {
+    from('buil/intermediates/bundles/release/')
+    into('build/outputs/')
+    include('classes.jar')
+    rename('classes.jar','projectName.jar')
+}
+makeJar.dependsOn(clearJar, build)
+*/
